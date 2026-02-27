@@ -10,7 +10,7 @@ from app.core.redis import CHANNEL, ONLINE_USERS_KEY
 from app.config import MESSAGE_HISTORY_LIMIT
 from app.schemas import MessageHistoryItem
 
-RepoFactory = Callable[[], AbstractAsyncContextManager[MessageRepository]]
+MessageRepoFactory = Callable[[], AbstractAsyncContextManager[MessageRepository]]
 
 
 def _now_str() -> str:
@@ -18,12 +18,12 @@ def _now_str() -> str:
 
 
 class ChatService:
-    def __init__(self, redis: Redis, repo_factory: RepoFactory):
+    def __init__(self, redis: Redis, message_repo_factory: MessageRepoFactory):
         self.redis = redis
-        self.repo_factory = repo_factory
+        self.message_repo_factory = message_repo_factory
 
     async def get_history(self, limit: int = MESSAGE_HISTORY_LIMIT) -> list[MessageHistoryItem]:
-        async with self.repo_factory() as repo:
+        async with self.message_repo_factory() as repo:
             messages = await repo.get_history(limit)
         return [
             MessageHistoryItem(
@@ -49,7 +49,7 @@ class ChatService:
         )
 
     async def handle_message(self, username: str, text: str) -> None:
-        async with self.repo_factory() as repo:
+        async with self.message_repo_factory() as repo:
             await repo.save(username, text)
         await self.redis.publish(
             CHANNEL,

@@ -17,7 +17,7 @@ async def websocket_endpoint(websocket: WebSocket, username: str):
 
     chat_service = ChatService(
         redis=get_redis(),
-        repo_factory=make_repo_factory(MessageRepository),
+        message_repo_factory=make_repo_factory(MessageRepository),
     )
 
     history = await chat_service.get_history()
