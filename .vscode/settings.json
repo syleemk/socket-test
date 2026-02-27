@@ -1,0 +1,9 @@
+{
+  "python.defaultInterpreterPath": "/Users/swimlee/Devs/socket-test/backend/.venv/bin/python",
+  "python.analysis.extraPaths": [
+    "/Users/swimlee/Devs/socket-test/backend",
+    "/Users/swimlee/Devs/socket-test/backend/.venv/lib/python3.11/site-packages"
+  ],
+  "python.analysis.venvPath": "/Users/swimlee/Devs/socket-test/backend",
+  "python.venvPath": "/Users/swimlee/Devs/socket-test/backend"
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>실시간 채팅</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 로그인 화면 -->
+  <div id="login-screen" class="screen">
+    <div class="login-card">
+      <h1>💬 실시간 채팅</h1>
+      <p class="subtitle">사용자 이름을 입력하고 입장하세요</p>
+      <input
+        id="username-input"
+        type="text"
+        placeholder="사용자 이름"
+        maxlength="20"
+        autocomplete="off"
+      />
+      <button id="join-btn">입장하기</button>
+    </div>
+  </div>
+
+  <!-- 채팅 화면 -->
+  <div id="chat-screen" class="screen hidden">
+    <header>
+      <div class="header-left">
+        <span class="logo">💬</span>
+        <span class="room-name">실시간 채팅방</span>
+      </div>
+      <div class="header-right">
+        <span id="online-count" class="online-badge">● 0명 접속중</span>
+        <span id="my-name" class="my-name"></span>
+        <button id="leave-btn">나가기</button>
+      </div>
+    </header>
+
+    <main id="messages"></main>
+
+    <footer>
+      <input
+        id="message-input"
+        type="text"
+        placeholder="메시지를 입력하세요..."
+        maxlength="500"
+        autocomplete="off"
+      />
+      <button id="send-btn">전송</button>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
