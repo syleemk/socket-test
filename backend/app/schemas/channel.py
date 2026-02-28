@@ -1,14 +1,7 @@
-from typing import TypedDict
 from pydantic import BaseModel
 
 
-class MessageHistoryItem(TypedDict):
-    username: str
-    text: str
-    time: str
-
-
-class ChannelInfo(TypedDict):
+class ChannelResponse(BaseModel):
     id: int
     name: str
     created_by: str
