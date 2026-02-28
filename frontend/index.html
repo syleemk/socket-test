@@ -15,15 +15,56 @@
   <div id="login-screen" class="screen">
     <div class="login-card">
       <h1>💬 실시간 채팅</h1>
-      <p class="subtitle">사용자 이름을 입력하고 입장하세요</p>
-      <input
-        id="username-input"
-        type="text"
-        placeholder="사용자 이름"
-        maxlength="20"
-        autocomplete="off"
-      />
-      <button id="join-btn">입장하기</button>
+
+      <div class="auth-tabs">
+        <button id="login-tab-btn" class="tab-btn active" data-tab="login">로그인</button>
+        <button id="register-tab-btn" class="tab-btn" data-tab="register">회원가입</button>
+      </div>
+
+      <form id="login-form">
+        <input
+          id="login-username"
+          type="text"
+          placeholder="사용자 이름"
+          maxlength="20"
+          autocomplete="off"
+        />
+        <input
+          id="login-password"
+          type="password"
+          placeholder="비밀번호"
+          maxlength="100"
+          autocomplete="current-password"
+        />
+        <p id="login-error" class="auth-error hidden"></p>
+        <button type="submit">로그인</button>
+      </form>
+
+      <form id="register-form" class="hidden">
+        <input
+          id="reg-username"
+          type="text"
+          placeholder="사용자 이름"
+          maxlength="20"
+          autocomplete="username"
+        />
+        <input
+          id="reg-email"
+          type="email"
+          placeholder="이메일"
+          maxlength="254"
+          autocomplete="email"
+        />
+        <input
+          id="reg-password"
+          type="password"
+          placeholder="비밀번호"
+          maxlength="100"
+          autocomplete="new-password"
+        />
+        <p id="register-error" class="auth-error hidden"></p>
+        <button type="submit">회원가입</button>
+      </form>
     </div>
   </div>
 
