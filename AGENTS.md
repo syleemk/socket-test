@@ -24,6 +24,7 @@ docker-compose up -d   # Redis:6379 / PostgreSQL:5432
 .claude/plans/
 ├── chat-project-init.md        # 실시간 채팅 프로젝트 초기 계획
 ├── chat-layer-separation.md    # chat.py 레이어 분리
+├── ddd-layer-refactoring.md    # DDD 레이어 리팩토링 (domain/infra/service/router)
 ├── dynamic-channels.md         # 동적 채널(채팅방) 구현
 └── containerization.md         # Docker Compose → K8s 전환 로드맵
 ```
