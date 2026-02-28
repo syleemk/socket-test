@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
@@ -11,6 +12,8 @@ from app.database import engine, init_db
 from app.infrastructure.pubsub import redis_subscriber
 from app.infrastructure.redis import get_redis
 from app.routers import channels, chat
+
+logging.getLogger("uvicorn.access").addFilter(lambda r: "GET /health" not in r.getMessage())
 
 
 @asynccontextmanager
