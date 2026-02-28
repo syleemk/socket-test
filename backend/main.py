@@ -13,11 +13,10 @@ from app.infrastructure.pubsub import redis_subscriber
 from app.infrastructure.redis import get_redis
 from app.routers import channels, chat
 
-logging.getLogger("uvicorn.access").addFilter(lambda r: "GET /health" not in r.getMessage())
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    logging.getLogger("uvicorn.access").addFilter(lambda r: "GET /health" not in r.getMessage())
     await init_db()
     task = asyncio.create_task(redis_subscriber())
     yield
