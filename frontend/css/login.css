@@ -1,0 +1,20 @@
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 48px 40px;
+  max-width: 400px;
+  margin: 0 auto;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+
+.login-card h1 { font-size: 2rem; }
+.login-card .subtitle { color: var(--text-muted); font-size: 0.9rem; }
+
+@media (max-width: 500px) {
+  .login-card { padding: 32px 24px; margin: 16px; }
+}
