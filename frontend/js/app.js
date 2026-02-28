@@ -144,7 +144,7 @@ joinBtn.addEventListener("click", () => {
 });
 
 usernameInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") joinBtn.click();
+  if (e.key === "Enter" && !e.isComposing) joinBtn.click();
 });
 
 leaveBtn.addEventListener("click", showChannels);
@@ -159,7 +159,7 @@ createChannelBtn.addEventListener("click", () => {
 });
 
 createChannelName.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") createChannelBtn.click();
+  if (e.key === "Enter" && !e.isComposing) createChannelBtn.click();
 });
 
 refreshChannelsBtn.addEventListener("click", loadChannels);
