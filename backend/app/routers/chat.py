@@ -2,29 +2,28 @@ import json
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from app.routers.manager import manager
 from app.core.redis import get_redis
-from app.repositories import make_repo_factory
-from app.repositories.message_repository import MessageRepository
+from app.repositories import message_repo_factory
+from app.routers.manager import manager
 from app.services.chat_service import ChatService
 
 router = APIRouter()
 
 
-@router.websocket("/ws/{username}")
-async def websocket_endpoint(websocket: WebSocket, username: str):
+@router.websocket("/ws/{channel_name}/{username}")
+async def websocket_endpoint(websocket: WebSocket, channel_name: str, username: str):
     await websocket.accept()
 
     chat_service = ChatService(
         redis=get_redis(),
-        message_repo_factory=make_repo_factory(MessageRepository),
+        message_repo_factory=message_repo_factory,
     )
 
-    history = await chat_service.get_history()
+    history = await chat_service.get_history(channel_name)
     await websocket.send_text(json.dumps({"type": "history", "messages": history}))
 
-    manager.add(username, websocket)
-    await chat_service.handle_join(username)
+    manager.add(channel_name, username, websocket)
+    await chat_service.handle_join(username, channel_name)
 
     try:
         while True:
@@ -35,8 +34,8 @@ async def websocket_endpoint(websocket: WebSocket, username: str):
                 text = data.get("text", "").strip()
                 if not text:
                     continue
-                await chat_service.handle_message(username, text)
+                await chat_service.handle_message(username, text, channel_name)
 
     except WebSocketDisconnect:
-        manager.remove(username)
-        await chat_service.handle_leave(username)
+        manager.remove(channel_name, username)
+        await chat_service.handle_leave(username, channel_name)
