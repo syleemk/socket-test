@@ -80,5 +80,5 @@ docker-compose down -v
 
 ```bash
 # Redis에서 접속자 목록 확인
-docker exec -it redis redis-cli SMEMBERS chat:online_users
+docker exec -it redis redis-cli --raw SMEMBERS chat:online_users
 ```
