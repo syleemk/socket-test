@@ -143,7 +143,7 @@ joinBtn.addEventListener("click", () => {
   showChat(username);
 });
 
-usernameInput.addEventListener("keydown", (e) => {
+usernameInput.addEventListener("keyup", (e) => {
   if (e.key === "Enter" && !e.isComposing) joinBtn.click();
 });
 
@@ -158,7 +158,7 @@ createChannelBtn.addEventListener("click", () => {
   createChannelName.value = "";
 });
 
-createChannelName.addEventListener("keydown", (e) => {
+createChannelName.addEventListener("keyup", (e) => {
   if (e.key === "Enter" && !e.isComposing) createChannelBtn.click();
 });
 
