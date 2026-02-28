@@ -2,11 +2,12 @@ import asyncio
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
 from app.config import CORS_ORIGINS
-from app.database import init_db
+from app.database import engine, init_db
 from app.infrastructure.pubsub import redis_subscriber
 from app.infrastructure.redis import get_redis
 from app.routers import channels, chat
@@ -40,5 +41,26 @@ app.include_router(channels.router)
 
 
 @app.get("/health")
-async def health() -> dict[str, str]:
-    return {"status": "ok"}
+async def health(response: Response) -> dict[str, str]:
+    result: dict[str, str] = {}
+
+    try:
+        await get_redis().ping()
+        result["redis"] = "ok"
+    except Exception:
+        result["redis"] = "error"
+
+    try:
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
+        result["postgres"] = "ok"
+    except Exception:
+        result["postgres"] = "error"
+
+    if all(v == "ok" for v in result.values()):
+        result["status"] = "ok"
+    else:
+        result["status"] = "error"
+        response.status_code = 503
+
+    return result
