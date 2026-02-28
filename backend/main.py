@@ -1,18 +1,19 @@
 import asyncio
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.database import init_db
-from app.infrastructure.redis import get_redis
-from app.infrastructure.pubsub import redis_subscriber
-from app.routers import chat, channels
 from app.config import CORS_ORIGINS
+from app.database import init_db
+from app.infrastructure.pubsub import redis_subscriber
+from app.infrastructure.redis import get_redis
+from app.routers import channels, chat
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     await init_db()
     task = asyncio.create_task(redis_subscriber())
     yield
@@ -22,7 +23,7 @@ async def lifespan(app: FastAPI):
     except asyncio.CancelledError:
         pass
     redis = get_redis()
-    await redis.aclose()
+    await redis.aclose()  # type: ignore[attr-defined]
 
 
 app = FastAPI(lifespan=lifespan)

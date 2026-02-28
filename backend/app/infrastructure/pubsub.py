@@ -1,10 +1,8 @@
-import asyncio
-
-from app.infrastructure.redis import get_redis
 from app.infrastructure.connection_manager import manager
+from app.infrastructure.redis import get_redis
 
 
-async def redis_subscriber():
+async def redis_subscriber() -> None:
     """Listens to all chat channels via pattern subscription and routes to WS clients."""
     r = get_redis()
     pubsub = r.pubsub()
@@ -20,4 +18,4 @@ async def redis_subscriber():
             await manager.broadcast_to_channel(channel_name, raw["data"])
     finally:
         await pubsub.punsubscribe("chat:channel:*")
-        await pubsub.aclose()
+        await pubsub.close()

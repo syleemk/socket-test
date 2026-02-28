@@ -2,16 +2,16 @@ import json
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
+from app.infrastructure.connection_manager import manager
 from app.infrastructure.redis import get_redis
 from app.infrastructure.repositories import message_repo_factory
-from app.infrastructure.connection_manager import manager
 from app.services.chat_service import ChatService
 
 router = APIRouter()
 
 
 @router.websocket("/ws/{channel_name}/{username}")
-async def websocket_endpoint(websocket: WebSocket, channel_name: str, username: str):
+async def websocket_endpoint(websocket: WebSocket, channel_name: str, username: str) -> None:
     await websocket.accept()
 
     chat_service = ChatService(

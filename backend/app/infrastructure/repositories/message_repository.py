@@ -10,7 +10,10 @@ class MessageRepository:
 
     async def get_history(self, channel_name: str, limit: int) -> list[Message]:
         result = await self.session.execute(
-            select(Message).where(Message.channel_name == channel_name).order_by(Message.created_at.desc()).limit(limit)
+            select(Message)
+            .where(Message.channel_name == channel_name)
+            .order_by(Message.created_at.desc())
+            .limit(limit)
         )
         return list(reversed(result.scalars().all()))
 

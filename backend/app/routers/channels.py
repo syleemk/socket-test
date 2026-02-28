@@ -1,10 +1,14 @@
 from fastapi import APIRouter, HTTPException
 
-from app.domain.channel import ChannelAlreadyExistsError, ChannelNotFoundError, ChannelPermissionError
+from app.domain.channel import (
+    ChannelAlreadyExistsError,
+    ChannelNotFoundError,
+    ChannelPermissionError,
+)
 from app.infrastructure.repositories import channel_repo_factory
+from app.models import Channel
 from app.schemas.channel import ChannelResponse, CreateChannelRequest
 from app.services.channel_service import ChannelService
-from app.models import Channel
 
 router = APIRouter(prefix="/channels", tags=["channels"])
 
@@ -22,13 +26,13 @@ def _to_response(channel: Channel) -> ChannelResponse:
 
 
 @router.get("", response_model=list[ChannelResponse])
-async def list_channels():
+async def list_channels() -> list[ChannelResponse]:
     channels = await _channel_service.list_channels()
     return [_to_response(c) for c in channels]
 
 
 @router.post("", response_model=ChannelResponse, status_code=201)
-async def create_channel(body: CreateChannelRequest):
+async def create_channel(body: CreateChannelRequest) -> ChannelResponse:
     try:
         channel = await _channel_service.create_channel(name=body.name, created_by=body.created_by)
         return _to_response(channel)
@@ -37,7 +41,7 @@ async def create_channel(body: CreateChannelRequest):
 
 
 @router.delete("/{channel_name}", status_code=204)
-async def delete_channel(channel_name: str, username: str):
+async def delete_channel(channel_name: str, username: str) -> None:
     try:
         await _channel_service.delete_channel(channel_name=channel_name, requesting_user=username)
     except ChannelNotFoundError:

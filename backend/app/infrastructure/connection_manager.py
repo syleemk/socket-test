@@ -1,9 +1,10 @@
 import asyncio
+
 from fastapi import WebSocket
 
 
 class ConnectionManager:
-    def __init__(self):
+    def __init__(self) -> None:
         # { channel_name: { username: WebSocket } }
         self._connections: dict[str, dict[str, WebSocket]] = {}
 
