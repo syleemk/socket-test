@@ -1,13 +1,13 @@
 import json
-from datetime import datetime, timezone
 from collections.abc import Callable
 from contextlib import AbstractAsyncContextManager
+from datetime import datetime, timezone
 
 from redis.asyncio import Redis
 
-from app.infrastructure.repositories.message_repository import MessageRepository
-from app.infrastructure.redis import channel_key, online_users_key
 from app.config import MESSAGE_HISTORY_LIMIT
+from app.infrastructure.redis import channel_key, online_users_key
+from app.infrastructure.repositories.message_repository import MessageRepository
 
 MessageRepoFactory = Callable[[], AbstractAsyncContextManager[MessageRepository]]
 

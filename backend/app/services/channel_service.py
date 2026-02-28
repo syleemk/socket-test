@@ -1,8 +1,12 @@
 from collections.abc import Callable
 from contextlib import AbstractAsyncContextManager
 
+from app.domain.channel import (
+    ChannelAlreadyExistsError,
+    ChannelNotFoundError,
+    ChannelPermissionError,
+)
 from app.infrastructure.repositories.channel_repository import ChannelRepository
-from app.domain.channel import ChannelAlreadyExistsError, ChannelNotFoundError, ChannelPermissionError
 from app.models import Channel
 
 ChannelRepoFactory = Callable[[], AbstractAsyncContextManager[ChannelRepository]]

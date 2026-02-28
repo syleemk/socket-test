@@ -1,4 +1,4 @@
-from collections.abc import Callable
+from collections.abc import AsyncGenerator, Callable
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from typing import TypeVar
 
@@ -9,15 +9,15 @@ T = TypeVar("T")
 
 def make_repo_factory(repo_class: type[T]) -> Callable[[], AbstractAsyncContextManager[T]]:
     @asynccontextmanager
-    async def factory():
+    async def factory() -> AsyncGenerator[T, None]:
         async with AsyncSessionLocal() as session:
-            yield repo_class(session)
+            yield repo_class(session)  # type: ignore[call-arg]
 
     return factory
 
 
-from app.infrastructure.repositories.message_repository import MessageRepository
-from app.infrastructure.repositories.channel_repository import ChannelRepository
+from app.infrastructure.repositories.channel_repository import ChannelRepository  # noqa: E402
+from app.infrastructure.repositories.message_repository import MessageRepository  # noqa: E402
 
 message_repo_factory = make_repo_factory(MessageRepository)
 channel_repo_factory = make_repo_factory(ChannelRepository)
