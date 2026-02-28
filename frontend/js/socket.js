@@ -8,8 +8,8 @@ export class ChatSocket {
     this.#handlers = handlers;
   }
 
-  connect(username) {
-    this.#ws = new WebSocket(`${WS_BASE}/${encodeURIComponent(username)}`);
+  connect(username, channelName) {
+    this.#ws = new WebSocket(`${WS_BASE}/${encodeURIComponent(channelName)}/${encodeURIComponent(username)}`);
 
     this.#ws.addEventListener("open", () => {
       console.log("WebSocket connected");

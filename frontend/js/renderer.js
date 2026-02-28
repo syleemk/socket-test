@@ -67,3 +67,34 @@ export function loadHistory(messages, myUsername) {
   }
   scrollToBottom();
 }
+
+export function renderChannelList(channels, onJoin, onDelete, myUsername) {
+  const container = document.getElementById("channel-list");
+  container.innerHTML = "";
+
+  if (channels.length === 0) {
+    container.innerHTML = '<p class="no-channels">채널이 없습니다. 첫 번째 채널을 만들어보세요!</p>';
+    return;
+  }
+
+  channels.forEach((ch) => {
+    const card = document.createElement("div");
+    card.className = "channel-card";
+    card.innerHTML = `
+      <div class="channel-info">
+        <span class="channel-name">#${ch.name}</span>
+        <span class="channel-meta">만든이: ${ch.created_by}</span>
+      </div>
+      <div class="channel-actions">
+        <button class="join-btn" data-name="${ch.name}">입장</button>
+        ${ch.created_by === myUsername ? `<button class="delete-btn" data-name="${ch.name}">삭제</button>` : ""}
+      </div>
+    `;
+    card.querySelector(".join-btn").addEventListener("click", () => onJoin(ch.name));
+    const deleteBtn = card.querySelector(".delete-btn");
+    if (deleteBtn) {
+      deleteBtn.addEventListener("click", () => onDelete(ch.name));
+    }
+    container.appendChild(card);
+  });
+}
