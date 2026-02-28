@@ -1,13 +1,11 @@
 import asyncio
-import aioredis
 
-from app.core.redis import get_redis
+from app.infrastructure.redis import get_redis
+from app.infrastructure.connection_manager import manager
 
 
 async def redis_subscriber():
     """Listens to all chat channels via pattern subscription and routes to WS clients."""
-    from app.routers.manager import manager
-
     r = get_redis()
     pubsub = r.pubsub()
     await pubsub.psubscribe("chat:channel:*")
@@ -15,11 +13,9 @@ async def redis_subscriber():
         async for raw in pubsub.listen():
             if raw["type"] != "pmessage":
                 continue
-            # raw["channel"] is bytes like b"chat:channel:general"
             channel_key = raw["channel"]
             if isinstance(channel_key, bytes):
                 channel_key = channel_key.decode()
-            # Extract channel name: "chat:channel:{name}" -> "{name}"
             channel_name = channel_key.removeprefix("chat:channel:")
             await manager.broadcast_to_channel(channel_name, raw["data"])
     finally:
