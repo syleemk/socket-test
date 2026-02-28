@@ -11,7 +11,7 @@ from app.database import engine, init_db
 from app.infrastructure.logging import init_logger
 from app.infrastructure.pubsub import redis_subscriber
 from app.infrastructure.redis import get_redis
-from app.routers import channels, chat
+from app.routers import auth, channels, chat
 
 
 @asynccontextmanager
@@ -40,6 +40,7 @@ app.add_middleware(
 
 app.include_router(chat.router)
 app.include_router(channels.router)
+app.include_router(auth.router)
 
 
 async def _check_redis() -> str:
