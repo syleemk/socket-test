@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
@@ -9,6 +8,7 @@ from sqlalchemy import text
 
 from app.config import CORS_ORIGINS
 from app.database import engine, init_db
+from app.infrastructure.logging import init_logger
 from app.infrastructure.pubsub import redis_subscriber
 from app.infrastructure.redis import get_redis
 from app.routers import channels, chat
@@ -16,7 +16,7 @@ from app.routers import channels, chat
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    logging.getLogger("uvicorn.access").addFilter(lambda r: "GET /health" not in r.getMessage())
+    init_logger()
     await init_db()
     task = asyncio.create_task(redis_subscriber())
     yield
