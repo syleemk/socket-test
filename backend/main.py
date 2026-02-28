@@ -40,27 +40,33 @@ app.include_router(chat.router)
 app.include_router(channels.router)
 
 
-@app.get("/health")
-async def health(response: Response) -> dict[str, str]:
-    result: dict[str, str] = {}
-
+async def _check_redis() -> str:
     try:
         await get_redis().ping()
-        result["redis"] = "ok"
+        return "ok"
     except Exception:
-        result["redis"] = "error"
+        return "error"
 
+
+async def _check_postgres() -> str:
     try:
         async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
-        result["postgres"] = "ok"
+        return "ok"
     except Exception:
-        result["postgres"] = "error"
+        return "error"
 
-    if all(v == "ok" for v in result.values()):
-        result["status"] = "ok"
-    else:
-        result["status"] = "error"
+
+@app.get("/health")
+async def health(response: Response) -> dict[str, str]:
+    redis_status, postgres_status = await asyncio.gather(_check_redis(), _check_postgres())
+
+    ok = redis_status == "ok" and postgres_status == "ok"
+    if not ok:
         response.status_code = 503
 
-    return result
+    return {
+        "redis": redis_status,
+        "postgres": postgres_status,
+        "status": "ok" if ok else "error",
+    }
