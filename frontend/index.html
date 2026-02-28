@@ -6,6 +6,7 @@
   <title>실시간 채팅</title>
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/login.css" />
+  <link rel="stylesheet" href="css/channels.css" />
   <link rel="stylesheet" href="css/chat.css" />
 </head>
 <body>
@@ -26,12 +27,32 @@
     </div>
   </div>
 
+  <!-- Channel Screen -->
+  <div id="channel-screen" class="hidden">
+    <div class="channel-container">
+      <div class="channel-header">
+        <h2>채팅 채널</h2>
+        <button id="back-to-login-btn" class="back-btn">← 로그아웃</button>
+      </div>
+      <div class="create-channel-form">
+        <input type="text" id="create-channel-name" placeholder="새 채널 이름" maxlength="50" />
+        <button id="create-channel-btn">채널 만들기</button>
+      </div>
+      <div class="channel-list-header">
+        <span>채널 목록</span>
+        <button id="refresh-channels-btn">새로고침</button>
+      </div>
+      <div id="channel-list"></div>
+    </div>
+  </div>
+
   <!-- 채팅 화면 -->
   <div id="chat-screen" class="screen hidden">
     <header>
       <div class="header-left">
         <span class="logo">💬</span>
         <span class="room-name">실시간 채팅방</span>
+        <span id="current-channel-name" class="current-channel"></span>
       </div>
       <div class="header-right">
         <span id="online-count" class="online-badge">● 0명 접속중</span>

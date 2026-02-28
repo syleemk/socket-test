@@ -14,3 +14,10 @@ def make_repo_factory(repo_class: type[T]) -> Callable[[], AbstractAsyncContextM
             yield repo_class(session)
 
     return factory
+
+
+from app.repositories.message_repository import MessageRepository
+from app.repositories.channel_repository import ChannelRepository
+
+message_repo_factory = make_repo_factory(MessageRepository)
+channel_repo_factory = make_repo_factory(ChannelRepository)

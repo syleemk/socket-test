@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import init_db
 from app.core.redis import get_redis
 from app.core.pubsub import redis_subscriber
-from app.routers import chat
+from app.routers import chat, channels
 from app.config import CORS_ORIGINS
 
 
@@ -35,3 +35,4 @@ app.add_middleware(
 )
 
 app.include_router(chat.router)
+app.include_router(channels.router)
