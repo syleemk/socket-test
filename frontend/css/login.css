@@ -15,6 +15,35 @@
 .login-card h1 { font-size: 2rem; }
 .login-card .subtitle { color: var(--text-muted); font-size: 0.9rem; }
 
+.auth-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab-btn {
+  background: var(--surface2);
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+#login-form,
+#register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
 @media (max-width: 500px) {
   .login-card { padding: 32px 24px; margin: 16px; }
 }
