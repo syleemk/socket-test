@@ -1,7 +1,9 @@
 import json
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from jose import JWTError
 
+from app.infrastructure.auth import decode_token
 from app.infrastructure.connection_manager import manager
 from app.infrastructure.redis import get_redis
 from app.infrastructure.repositories import message_repo_factory
@@ -10,8 +12,28 @@ from app.services.chat_service import ChatService
 router = APIRouter()
 
 
-@router.websocket("/ws/{channel_name}/{username}")
-async def websocket_endpoint(websocket: WebSocket, channel_name: str, username: str) -> None:
+@router.websocket("/ws/{channel_name}")
+async def websocket_endpoint(websocket: WebSocket, channel_name: str) -> None:
+    token = websocket.query_params.get("token")
+    if not token:
+        await websocket.close(code=4001)
+        return
+
+    try:
+        payload = decode_token(token)
+    except JWTError:
+        await websocket.close(code=4001)
+        return
+
+    if payload.get("type") != "access":
+        await websocket.close(code=4001)
+        return
+
+    username = payload.get("sub")
+    if not isinstance(username, str) or not username:
+        await websocket.close(code=4001)
+        return
+
     await websocket.accept()
 
     chat_service = ChatService(

@@ -11,4 +11,3 @@ class ChannelResponse(BaseModel):
 
 class CreateChannelRequest(BaseModel):
     name: str
-    created_by: str
