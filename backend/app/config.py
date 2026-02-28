@@ -3,9 +3,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+DB_USER: str = os.getenv("DB_USER", "")
+DB_PASSWORD: str = os.getenv("DB_PASSWORD", "")
+DB_HOST: str = os.getenv("DB_HOST", "localhost")
+DB_PORT: str = os.getenv("DB_PORT", "5432")
+DB_NAME: str = os.getenv("DB_NAME", "chatdb")
+
 DATABASE_URL: str = os.getenv(
     "DATABASE_URL",
-    "postgresql+asyncpg://chatuser:chatpass@localhost:5432/chatdb",
+    f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
 )
 
 REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
