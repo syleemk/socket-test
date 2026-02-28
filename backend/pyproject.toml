@@ -13,17 +13,24 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "flake8>=7.1.1",
-    "isort>=5.13.2",
+    "ruff>=0.9.0",
     "mypy>=1.11.2",
     "types-redis>=4.6.0",
 ]
 
-[tool.isort]
-profile = "black"
-line_length = 100
-known_first_party = ["app"]
-src_paths = ["."]
+[tool.ruff]
+line-length = 100
+exclude = [".git", "__pycache__", ".venv", "migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E203"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
 
 [tool.mypy]
 python_version = "3.11"
@@ -37,3 +44,4 @@ exclude = ["migrations/", ".venv/"]
 [[tool.mypy.overrides]]
 module = "asyncpg.*"
 ignore_missing_imports = true
+
