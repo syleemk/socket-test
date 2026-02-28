@@ -3,33 +3,34 @@
 ## 전체 로드맵
 
 ```
-1단계: Docker Compose로 로컬 개발환경 완성
+1단계: Docker Compose로 로컬 개발환경 완성   ✅ (완료)
         ↓
-2단계: Dockerfile 최적화 (multi-stage build)
+2단계: Dockerfile 최적화 (multi-stage build)  ✅ (완료)
         ↓
-3단계: minikube 로컬 k8s 클러스터 구성
+3단계: minikube 로컬 k8s 클러스터 구성        ⬜ (미완료)
         ↓
-4단계: kompose로 자동 변환 후 yaml 직접 수정
+4단계: kompose로 자동 변환 후 yaml 직접 수정  ⬜ (미완료)
         ↓
-5단계: Ingress, HPA, liveness/readinessProbe 추가
+5단계: Ingress, HPA, liveness/readinessProbe 추가 ⬜ (미완료)
         ↓
-6단계: (선택) Helm chart로 패키징
+6단계: (선택) Helm chart로 패키징              ⬜ (미완료)
 ```
 
 ---
 
-## 1단계: Docker Compose 완성
+## 1단계: Docker Compose 완성 ✅
 
 ### 목표
 - BE (FastAPI), FE (nginx), Redis, PostgreSQL 4개 서비스를 compose로 통합
 
 ### 작업 목록
-- [ ] `backend/Dockerfile` 작성
-- [ ] `frontend/Dockerfile` 작성 (nginx 기반)
-- [ ] `docker-compose.yml` 에 backend, frontend 서비스 추가
-- [ ] `.env` 파일로 환경변수 외부화
-- [ ] 각 서비스에 `healthcheck` 추가
-- [ ] `depends_on` + `condition: service_healthy` 설정
+- [x] `backend/Dockerfile` 작성
+- [x] `frontend/Dockerfile` 작성 (nginx 기반)
+- [x] `docker-compose.yml` 에 backend, frontend 서비스 추가
+- [x] `.env` 파일로 환경변수 외부화 (루트 `.env.example` 추가, `.env`는 gitignore)
+- [x] 각 서비스에 `healthcheck` 추가
+- [x] `depends_on` + `condition: service_healthy` 설정
+- [x] `/health` 엔드포인트 추가 (healthcheck 의존)
 
 ### K8s 전환을 염두에 둔 작성 원칙
 - 이미지 태그 명시 (`image: socket-test-backend:latest`)
@@ -94,7 +95,7 @@ volumes:
 
 ---
 
-## 2단계: Dockerfile 최적화
+## 2단계: Dockerfile 최적화 ✅
 
 ### Backend (FastAPI + uv)
 ```dockerfile
