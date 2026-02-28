@@ -10,3 +10,30 @@ dependencies = [
     "asyncpg>=0.30.0",
     "python-dotenv>=1.0.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "flake8>=7.1.1",
+    "isort>=5.13.2",
+    "mypy>=1.11.2",
+    "types-redis>=4.6.0",
+]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+known_first_party = ["app"]
+src_paths = ["."]
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+ignore_missing_imports = true
+disallow_untyped_defs = true
+warn_return_any = true
+warn_unused_ignores = true
+exclude = ["migrations/", ".venv/"]
+
+[[tool.mypy.overrides]]
+module = "asyncpg.*"
+ignore_missing_imports = true
