@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import WebSocket
 
 
@@ -12,14 +14,15 @@ class ConnectionManager:
         self._connections.pop(username, None)
 
     async def broadcast(self, data: str):
-        dead = []
-        for username, ws in self._connections.items():
+        async def send(username: str, ws: WebSocket):
             try:
                 await ws.send_text(data)
             except Exception:
-                dead.append(username)
-        for username in dead:
-            self.remove(username)
+                self.remove(username)
+
+        await asyncio.gather(*[
+            send(username, ws) for username, ws in list(self._connections.items())
+        ])
 
     def count(self) -> int:
         return len(self._connections)
