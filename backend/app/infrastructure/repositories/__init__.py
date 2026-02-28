@@ -5,6 +5,7 @@ from typing import TypeVar
 from app.database import AsyncSessionLocal
 from app.infrastructure.repositories.channel_repository import ChannelRepository  # noqa: E402
 from app.infrastructure.repositories.message_repository import MessageRepository  # noqa: E402
+from app.infrastructure.repositories.user_repository import UserRepository  # noqa: E402
 
 T = TypeVar("T")
 
@@ -20,3 +21,4 @@ def make_repo_factory(repo_class: type[T]) -> Callable[[], AbstractAsyncContextM
 
 message_repo_factory = make_repo_factory(MessageRepository)
 channel_repo_factory = make_repo_factory(ChannelRepository)
+user_repo_factory = make_repo_factory(UserRepository)
