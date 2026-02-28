@@ -2,9 +2,9 @@ import json
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from app.core.redis import get_redis
-from app.repositories import message_repo_factory
-from app.routers.manager import manager
+from app.infrastructure.redis import get_redis
+from app.infrastructure.repositories import message_repo_factory
+from app.infrastructure.connection_manager import manager
 from app.services.chat_service import ChatService
 
 router = APIRouter()

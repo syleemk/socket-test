@@ -5,8 +5,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import init_db
-from app.core.redis import get_redis
-from app.core.pubsub import redis_subscriber
+from app.infrastructure.redis import get_redis
+from app.infrastructure.pubsub import redis_subscriber
 from app.routers import chat, channels
 from app.config import CORS_ORIGINS
 

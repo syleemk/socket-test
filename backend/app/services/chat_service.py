@@ -5,8 +5,8 @@ from contextlib import AbstractAsyncContextManager
 
 from redis.asyncio import Redis
 
-from app.repositories.message_repository import MessageRepository
-from app.core.redis import channel_key, online_users_key
+from app.infrastructure.repositories.message_repository import MessageRepository
+from app.infrastructure.redis import channel_key, online_users_key
 from app.config import MESSAGE_HISTORY_LIMIT
 
 MessageRepoFactory = Callable[[], AbstractAsyncContextManager[MessageRepository]]

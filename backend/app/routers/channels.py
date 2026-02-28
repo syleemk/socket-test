@@ -1,61 +1,46 @@
 from fastapi import APIRouter, HTTPException
 
-from app.database import AsyncSessionLocal
-from app.repositories.channel_repository import ChannelRepository
-from app.schemas import CreateChannelRequest, ChannelInfo
+from app.domain.channel import ChannelAlreadyExistsError, ChannelNotFoundError, ChannelPermissionError
+from app.infrastructure.repositories import channel_repo_factory
+from app.schemas.channel import ChannelResponse, CreateChannelRequest
+from app.services.channel_service import ChannelService
+from app.models import Channel
 
 router = APIRouter(prefix="/channels", tags=["channels"])
 
-
-async def _get_repo() -> ChannelRepository:
-    async with AsyncSessionLocal() as session:
-        return ChannelRepository(session)
+_channel_service = ChannelService(channel_repo_factory=channel_repo_factory)
 
 
-@router.get("", response_model=list[ChannelInfo])
+def _to_response(channel: Channel) -> ChannelResponse:
+    return ChannelResponse(
+        id=channel.id,
+        name=channel.name,
+        created_by=channel.created_by,
+        is_private=channel.is_private,
+        created_at=channel.created_at.isoformat() if channel.created_at else "",
+    )
+
+
+@router.get("", response_model=list[ChannelResponse])
 async def list_channels():
-    async with AsyncSessionLocal() as session:
-        repo = ChannelRepository(session)
-        channels = await repo.get_all()
-        return [
-            ChannelInfo(
-                id=c.id,
-                name=c.name,
-                created_by=c.created_by,
-                is_private=c.is_private,
-                created_at=c.created_at.isoformat() if c.created_at else "",
-            )
-            for c in channels
-        ]
+    channels = await _channel_service.list_channels()
+    return [_to_response(c) for c in channels]
 
 
-@router.post("", response_model=ChannelInfo, status_code=201)
+@router.post("", response_model=ChannelResponse, status_code=201)
 async def create_channel(body: CreateChannelRequest):
-    async with AsyncSessionLocal() as session:
-        repo = ChannelRepository(session)
-        existing = await repo.get_by_name(body.name)
-        if existing:
-            raise HTTPException(status_code=409, detail="Channel name already exists")
-        channel = await repo.create(
-            name=body.name,
-            created_by=body.created_by,
-        )
-        return ChannelInfo(
-            id=channel.id,
-            name=channel.name,
-            created_by=channel.created_by,
-            is_private=channel.is_private,
-            created_at=channel.created_at.isoformat() if channel.created_at else "",
-        )
+    try:
+        channel = await _channel_service.create_channel(name=body.name, created_by=body.created_by)
+        return _to_response(channel)
+    except ChannelAlreadyExistsError:
+        raise HTTPException(status_code=409, detail="Channel name already exists")
 
 
 @router.delete("/{channel_name}", status_code=204)
 async def delete_channel(channel_name: str, username: str):
-    async with AsyncSessionLocal() as session:
-        repo = ChannelRepository(session)
-        channel = await repo.get_by_name(channel_name)
-        if not channel:
-            raise HTTPException(status_code=404, detail="Channel not found")
-        if channel.created_by != username:
-            raise HTTPException(status_code=403, detail="Only the creator can delete this channel")
-        await repo.delete(channel)
+    try:
+        await _channel_service.delete_channel(channel_name=channel_name, requesting_user=username)
+    except ChannelNotFoundError:
+        raise HTTPException(status_code=404, detail="Channel not found")
+    except ChannelPermissionError:
+        raise HTTPException(status_code=403, detail="Only the creator can delete this channel")
