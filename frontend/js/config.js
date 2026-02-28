@@ -1,6 +1,3 @@
-const { protocol, hostname, port } = window.location;
-const wsProtocol = protocol === "https:" ? "wss:" : "ws:";
-const origin = `${hostname}${port ? `:${port}` : ""}`;
-
-export const WS_BASE = `${wsProtocol}//${origin}/ws`;
-export const API_BASE = `${protocol}//${origin}/api`;
+const host = window.location.hostname;
+export const WS_BASE = `ws://${host}:8000/ws`;
+export const API_BASE = `http://${host}:8000`;
