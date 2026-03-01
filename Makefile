@@ -1,4 +1,4 @@
-.PHONY: help setup up down be fe logs
+.PHONY: help setup up down logs rebuild rebuild-be rebuild-fe
 
 # ── 기본 ────────────────────────────────────────────────
 help:
@@ -6,9 +6,10 @@ help:
 	@echo "  make setup   - 의존성 설치 (최초 1회)"
 	@echo "  make up      - 인프라(Redis, PostgreSQL) 시작"
 	@echo "  make down    - 인프라 종료"
-	@echo "  make be      - 백엔드 서버 실행"
-	@echo "  make fe      - 프론트엔드 개발 서버 실행"
-	@echo "  make logs    - 인프라 컨테이너 로그 확인"
+	@echo "  make logs       - 인프라 컨테이너 로그 확인"
+	@echo "  make rebuild    - frontend·backend 이미지 재빌드 후 전체 기동"
+	@echo "  make rebuild-be - 백엔드만 이미지 재빌드 후 기동"
+	@echo "  make rebuild-fe - 프론트엔드만 이미지 재빌드 후 기동"
 
 # ── 환경 세팅 ────────────────────────────────────────────
 setup:
@@ -24,9 +25,12 @@ down:
 logs:
 	docker compose logs -f
 
-# ── 서버 실행 ────────────────────────────────────────────
-be:
-	uv --directory backend run uvicorn main:app --reload --host 0.0.0.0 --port 8000
+# ── 재빌드 ───────────────────────────────────────────────
+rebuild:
+	docker compose up -d --build backend frontend
 
-fe:
-	npx serve frontend -l 3000
+rebuild-be:
+	docker compose up -d --build backend
+
+rebuild-fe:
+	docker compose up -d --build frontend
