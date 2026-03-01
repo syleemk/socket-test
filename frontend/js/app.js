@@ -18,7 +18,7 @@ const registerTabBtn = document.getElementById("register-tab-btn");
 const loginForm = document.getElementById("login-form");
 const registerForm = document.getElementById("register-form");
 
-const loginUsername = document.getElementById("login-username");
+const loginEmail = document.getElementById("login-email");
 const loginPassword = document.getElementById("login-password");
 const loginError = document.getElementById("login-error");
 
@@ -88,7 +88,7 @@ function showAuthTab(tab) {
   setError(registerError, "");
 
   if (isLogin) {
-    loginUsername.focus();
+    loginEmail.focus();
   } else {
     regUsername.focus();
   }
@@ -245,16 +245,16 @@ loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   setError(loginError, "");
 
-  const username = loginUsername.value.trim();
+  const email = loginEmail.value.trim();
   const password = loginPassword.value;
 
-  if (!username || !password) {
-    setError(loginError, "사용자 이름과 비밀번호를 입력해주세요.");
+  if (!email || !password) {
+    setError(loginError, "이메일과 비밀번호를 입력해주세요.");
     return;
   }
 
   try {
-    await auth.login(username, password);
+    await auth.login(email, password);
     showChannelScreen();
   } catch (err) {
     setError(loginError, err instanceof Error ? err.message : "로그인에 실패했습니다.");
@@ -276,7 +276,7 @@ registerForm.addEventListener("submit", async (e) => {
 
   try {
     await auth.register(username, email, password);
-    await auth.login(username, password);
+    await auth.login(email, password);
     showChannelScreen();
   } catch (err) {
     setError(registerError, err instanceof Error ? err.message : "회원가입에 실패했습니다.");

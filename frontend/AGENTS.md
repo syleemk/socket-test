@@ -59,10 +59,12 @@ auth.getRefreshToken()                          — refresh_token 반환
 auth.getUsername()                              — 저장된 username 반환
 auth.isLoggedIn()                               — access_token 존재 여부
 auth.register(username, email, password)        — POST /auth/register
-auth.login(username, password)                  — POST /auth/login → 토큰 저장
+auth.login(email, password)                     — POST /auth/login → 토큰 저장
 auth.refresh()                                  — POST /auth/refresh → access_token 갱신
 auth.logout()                                   — POST /auth/logout → 토큰 전체 삭제
 ```
+
+- 로그인 시 display name은 폼 입력값이 아니라 서버 응답의 `username`을 저장해 사용.
 
 ### js/socket.js — `ChatSocket` 클래스
 ```
@@ -96,6 +98,8 @@ loadChannels()            — apiFetch GET /channels → renderChannelList()
 createChannel(name)       — apiFetch POST /channels
 deleteChannel(name)       — apiFetch DELETE /channels/{name}
 ```
+
+- 로그인 폼 입력 필드 ID는 `login-email`이며, 로그인 submit은 `email + password`로 처리.
 
 ## 수신 메시지 처리
 
