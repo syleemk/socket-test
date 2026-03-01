@@ -61,11 +61,11 @@ export const auth = {
     return res.json();
   },
 
-  async login(username, password) {
+  async login(email, password) {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     });
 
     if (!res.ok) {
@@ -73,7 +73,7 @@ export const auth = {
     }
 
     const data = await res.json();
-    this.save(data.access_token, data.refresh_token, username);
+    this.save(data.access_token, data.refresh_token, data.username);
     return data;
   },
 
