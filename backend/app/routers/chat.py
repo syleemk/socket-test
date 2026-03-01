@@ -29,7 +29,7 @@ async def websocket_endpoint(websocket: WebSocket, channel_name: str) -> None:
         await websocket.close(code=4001)
         return
 
-    username = payload.get("sub")
+    username = payload.get("username")
     if not isinstance(username, str) or not username:
         await websocket.close(code=4001)
         return

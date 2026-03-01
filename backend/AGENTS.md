@@ -29,7 +29,7 @@ backend/
     │       ├── user_repository.py
     │       └── __init__.py         # channel_repo_factory, message_repo_factory, user_repo_factory
     ├── services/
-    │   ├── auth_service.py         # AuthService: register/login/refresh/logout/get_user_by_username
+    │   ├── auth_service.py         # AuthService: register/login/refresh/logout/get_user_by_email
     │   ├── channel_service.py      # ChannelService: list/create/delete
     │   └── chat_service.py         # ChatService: join/message/leave/history
     ├── schemas/
@@ -71,7 +71,7 @@ router → service → repository
 | 메서드 | 경로 | 인증 | 설명 |
 |---|---|---|---|
 | `POST` | `/auth/register` | 없음 | 회원가입 (`{ username, email, password }`) → UserResponse |
-| `POST` | `/auth/login` | 없음 | 로그인 (`{ username, password }`) → `{ access_token, refresh_token }` |
+| `POST` | `/auth/login` | 없음 | 로그인 (`{ email, password }`) → `{ access_token, refresh_token, username }` |
 | `POST` | `/auth/refresh` | 없음 | 토큰 갱신 (`{ refresh_token }`) → `{ access_token }` |
 | `POST` | `/auth/logout` | Bearer | 로그아웃 (Redis refresh 토큰 삭제) |
 | `GET` | `/auth/me` | Bearer | 현재 사용자 정보 |
@@ -115,14 +115,14 @@ router → service → repository
 |---|---|---|
 | `chat:channel:{name}` | pub/sub | 채널 메시지 브로드캐스트 |
 | `chat:online_users:{name}` | Set | 채널 접속자 관리 (SADD/SREM/SCARD) |
-| `auth:refresh:{username}` | String | refresh token 저장 (TTL: REFRESH_TOKEN_EXPIRE_DAYS일) |
+| `auth:refresh:{email}` | String | refresh token 저장 (TTL: REFRESH_TOKEN_EXPIRE_DAYS일) |
 
 ## PostgreSQL 스키마
 
 ```sql
 channels(id SERIAL PK, name VARCHAR(100) UNIQUE, created_by VARCHAR(50), is_private BOOLEAN DEFAULT FALSE, created_at TIMESTAMPTZ DEFAULT NOW())
 messages(id SERIAL PK, channel_name VARCHAR(100), username VARCHAR(50), text TEXT, created_at TIMESTAMPTZ DEFAULT NOW())
-users(id SERIAL PK, username VARCHAR(50) UNIQUE, email VARCHAR(254) UNIQUE, hashed_password VARCHAR(255), is_active BOOLEAN DEFAULT TRUE, created_at TIMESTAMPTZ DEFAULT NOW())
+users(id SERIAL PK, username VARCHAR(50), email VARCHAR(254) UNIQUE, hashed_password VARCHAR(255), is_active BOOLEAN DEFAULT TRUE, created_at TIMESTAMPTZ DEFAULT NOW())
 ```
 
 `init_db()`가 앱 시작 시 테이블을 자동 생성. Alembic 없음 — 컬럼 변경 시 수동 ALTER 필요.
@@ -130,7 +130,7 @@ users(id SERIAL PK, username VARCHAR(50) UNIQUE, email VARCHAR(254) UNIQUE, hash
 ## 인증 구조
 
 - **비밀번호 해싱**: SHA-256 prehash → base64 → bcrypt (72바이트 제한 우회)
-- **JWT**: `python-jose` 사용. access(15분) / refresh(7일) 두 종류.
+- **JWT**: `python-jose` 사용. access(15분) / refresh(7일) 두 종류. `sub=email`, `username` 클레임 포함.
 - **refresh token**: Redis에 저장. `/auth/refresh` 시 일치 여부 검증. `/auth/logout` 시 삭제.
 - **WS 인증**: HTTP 헤더 미지원 → `?token=` 쿼리 파라미터로 전달. 실패 시 WS close code `4001`.
 - **FastAPI Dependency**: `get_current_user()` — `dependencies/auth.py`. 채널 생성/삭제, 로그아웃, `/auth/me`에서 사용.

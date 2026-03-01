@@ -41,19 +41,23 @@ async def register(body: RegisterRequest) -> UserResponse:
         )
         return _to_user_response(user)
     except UserAlreadyExistsError:
-        raise HTTPException(status_code=409, detail="Username or email already exists")
+        raise HTTPException(status_code=409, detail="Email already exists")
 
 
 @router.post("/login", response_model=TokenResponse)
 async def login(body: LoginRequest) -> TokenResponse:
     try:
-        access_token, refresh_token = await _auth_service.login(
-            username=body.username,
+        access_token, refresh_token, username = await _auth_service.login(
+            email=body.email,
             password=body.password,
         )
-        return TokenResponse(access_token=access_token, refresh_token=refresh_token)
+        return TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            username=username,
+        )
     except InvalidCredentialsError:
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+        raise HTTPException(status_code=401, detail="Invalid email or password")
 
 
 @router.post("/refresh", response_model=AccessTokenResponse)
@@ -69,7 +73,7 @@ async def refresh(body: RefreshRequest) -> AccessTokenResponse:
 
 @router.post("/logout", status_code=204)
 async def logout(current_user: User = Depends(get_current_user)) -> Response:
-    await _auth_service.logout(current_user.username)
+    await _auth_service.logout(current_user.email)
     return Response(status_code=204)
 
 
