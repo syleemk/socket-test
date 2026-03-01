@@ -26,22 +26,47 @@ def verify_password(plain: str, hashed: str) -> bool:
         return False
 
 
-def _create_token(subject: str, expires_delta: timedelta, token_type: str) -> str:
+def _create_token(
+    subject: str,
+    expires_delta: timedelta,
+    token_type: str,
+    username: str | None = None,
+) -> str:
     expires_at = datetime.now(timezone.utc) + expires_delta
     payload = {
         "sub": subject,
         "exp": expires_at,
         "type": token_type,
     }
+    if username is not None:
+        payload["username"] = username
     return cast(str, jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM))
 
 
-def create_access_token(subject: str, expires_delta: timedelta) -> str:
-    return _create_token(subject=subject, expires_delta=expires_delta, token_type="access")
+def create_access_token(
+    subject: str,
+    expires_delta: timedelta,
+    username: str | None = None,
+) -> str:
+    return _create_token(
+        subject=subject,
+        expires_delta=expires_delta,
+        token_type="access",
+        username=username,
+    )
 
 
-def create_refresh_token(subject: str, expires_delta: timedelta) -> str:
-    return _create_token(subject=subject, expires_delta=expires_delta, token_type="refresh")
+def create_refresh_token(
+    subject: str,
+    expires_delta: timedelta,
+    username: str | None = None,
+) -> str:
+    return _create_token(
+        subject=subject,
+        expires_delta=expires_delta,
+        token_type="refresh",
+        username=username,
+    )
 
 
 def decode_token(token: str) -> dict[str, Any]:
