@@ -32,6 +32,6 @@ async def get_current_user(
         raise HTTPException(status_code=401, detail="Invalid token subject")
 
     try:
-        return await _auth_service.get_user_by_username(subject)
+        return await _auth_service.get_user_by_email(subject)
     except UserNotFoundError:
         raise HTTPException(status_code=401, detail="User not found")
