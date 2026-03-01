@@ -1,6 +1,6 @@
 # AGENTS.md — socket-test
 
-WebSocket 실시간 채팅. FastAPI + Redis pub/sub + PostgreSQL.
+WebSocket 실시간 채팅. FastAPI + Redis pub/sub + PostgreSQL. JWT 인증.
 
 ## 구조
 ```
@@ -22,11 +22,9 @@ docker-compose up -d   # Redis:6379 / PostgreSQL:5432
 
 ```
 .claude/plans/
-├── chat-project-init.md        # 실시간 채팅 프로젝트 초기 계획
-├── chat-layer-separation.md    # chat.py 레이어 분리
-├── ddd-layer-refactoring.md    # DDD 레이어 리팩토링 (domain/infra/service/router)
-├── dynamic-channels.md         # 동적 채널(채팅방) 구현
-└── containerization.md         # Docker Compose → K8s 전환 로드맵
+├── containerization.md     # Docker Compose → K8s 전환 로드맵
+├── jwt-auth.md             # JWT 인증 백엔드 구현 계획
+└── jwt-auth-frontend.md    # JWT 인증 프론트엔드 연동 계획
 ```
 
 - 새 플랜 작성 시 `.claude/plans/<이름>.md` 에 저장
@@ -35,8 +33,18 @@ docker-compose up -d   # Redis:6379 / PostgreSQL:5432
 
 ## 메시지 흐름
 ```
-Client ──WS──▶ FastAPI ──publish──▶ Redis(chat:channel)
+Client ──WS──▶ FastAPI ──publish──▶ Redis(chat:channel:{name})
                   │                        │ subscribe
                   ▼                        ▼
              PostgreSQL          ConnectionManager.broadcast()
+```
+
+## 인증 흐름
+```
+[회원가입] POST /auth/register
+[로그인]   POST /auth/login → { access_token, refresh_token }
+[WS 연결]  /ws/{channel}?token={access_token}
+[API 요청] Authorization: Bearer {access_token}
+[갱신]     POST /auth/refresh → { access_token }
+[로그아웃] POST /auth/logout  (Redis refresh 토큰 삭제)
 ```
