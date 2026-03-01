@@ -42,7 +42,7 @@ Client ──WS──▶ FastAPI ──publish──▶ Redis(chat:channel:{name
 ## 인증 흐름
 ```
 [회원가입] POST /auth/register
-[로그인]   POST /auth/login → { access_token, refresh_token }
+[로그인]   POST /auth/login ({ email, password }) → { access_token, refresh_token, username }
 [WS 연결]  /ws/{channel}?token={access_token}
 [API 요청] Authorization: Bearer {access_token}
 [갱신]     POST /auth/refresh → { access_token }
